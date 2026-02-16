@@ -5,6 +5,7 @@ VoiceAI 的 RTVI 处理器
 
 from dataclasses import dataclass, field
 from typing import Optional, Any, Dict, List
+from pipecat.services.ai_services import TTSService, LLMService
 from pipecat.frames.frames import (
     BotReadyFrame,
     ClientReadyFrame,
@@ -21,16 +22,17 @@ from pipecat.frames.frames import (
 from loguru import logger
 
 # Import Doubao STT service
-from ..doubao_stt import DoubaoSTTService, get_service
+from ..doubao_stt import DoubaoSTTService, get_service as get_doubao_stt_service
+# Import Zhipu GLM LLM service
+from ..zhipu_llm import get_service as get_glm_llm_service
 
 
 @dataclass
 class RTVIConfig:
     """Configuration for RTVI processor."""
-    vad: RTVAudioService
-    stt: Optional[TTSService] = get_service("doubao_stt")
-    llm: Optional[LLMService] = get_service("glm_llm")
-    tts: Optional[TTSService] = get_service("doubao_tts")
+    stt: Optional[TTSService] = None
+    llm: Optional[LLMService] = None
+    tts: Optional[TTSService] = None
 
 
 @dataclass
@@ -99,14 +101,14 @@ class RTVIProcessor:
 
         # Add Zhipu GLM LLM service if configured
         if self.config.llm:
-            if self.config.llm.model == "doubao":
-                # Doubao LLM doesn't support service config via RTVI
-                pass
-            else:  # Zhipu GLM via OpenAI compatible
+            # Check the model to determine service type
+            model = getattr(self.config.llm, "model", "")
+            if "glm" in model.lower() or model.startswith("glm"):
+                # Zhipu GLM via OpenAI compatible
                 config_data.append({
-                    "service": self.config.llm.model,
+                    "service": "glm",
                     "options": [
-                        {"name": "model", "value": "glm-4"},
+                        {"name": "model", "value": model or "glm-4"},
                         {"name": "temperature", "value": 0.7},
                     ]
                 })

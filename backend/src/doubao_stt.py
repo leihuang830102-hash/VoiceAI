@@ -44,8 +44,8 @@ class DoubaoSTTService:
             "Content-Type": "application/json",
             "X-Api-App-Key": self.app_id,
             "X-Api-Access-Key": self.access_key,
-        "X-Api-Request-Id": self._generate_request_id(),
-        "X-Api-Resource-Id": "volc.bigasr.auc",
+            "X-Api-Request-Id": self._generate_request_id(),
+            "X-Api-Resource-Id": "volc.bigasr.auc",
             "X-Api-Sequence": "1",
         }
 
@@ -101,7 +101,7 @@ class DoubaoSTTService:
             "Content-Type": "application/json",
             "X-Api-App-Key": self.app_id,
             "X-Api-Access-Key": self.access_key,
-        "X-Api-Request-Id": self._generate_request_id(),
+            "X-Api-Request-Id": self._generate_request_id(),
             "X-Api-Resource-Id": "volc.bigasr.auc",
             "X-Api-Sequence": "1",
         }
@@ -109,13 +109,13 @@ class DoubaoSTTService:
         data = {
             "app": {
                 "task": task_id,
-            "result": 0,  # Only need task, don't need result
-            "format": "json",
+                "result": 0,  # Only need task, don't need result
+                "format": "json",
                 "language": "zh-CN",
-            "enable_itn": False,
+                "enable_itn": False,
                 "enable_punc": False,
                 "enable_ddc": False,
-            "enable_speaker_info": False,
+                "enable_speaker_info": False,
                 "enable_channel_split": False,
                 "enable_emotion_detection": False,
                 "enable_gender_detection": False,
@@ -151,11 +151,11 @@ class DoubaoSTTService:
                         "text": full_text,
                         "utterances": transcriptions,
                     }
+
+                    return result
                 else:
                     logger.error(f"Failed to query result: {response_json}")
                     raise Exception(f"Failed to query result: {response_json}")
-
-                return result
 
     def _generate_request_id(self) -> str:
         """Generate a unique request ID."""

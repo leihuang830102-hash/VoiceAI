@@ -3,6 +3,7 @@ Zhipu GLM LLM Service (OpenAI Compatible)
 智谱 GLM 大语言模型服务 - OpenAI 兼容接口
 """
 
+import os
 import aiohttp
 import json
 from loguru import logger
@@ -26,9 +27,9 @@ class ZhipuGLMService:
             api_key: Zhipu AI API key
             model: GLM model ID (default: glm-4)
         """
-        self.api_key = api_key
-        self.model = model
-        logger.info(f"Initializing Zhipu GLM service with model: {model}")
+        self.api_key = api_key or ZHIPU_API_KEY
+        self.model = model or GLM_MODEL
+        logger.info(f"Initializing Zhipu GLM service with model: {self.model}")
 
     async def get_llm_config(self) -> dict:
         """Get LLM service configuration for RTVI."""
@@ -54,14 +55,14 @@ class ZhipuGLMService:
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.api_key}",
-        "X-Api-Resource-Id": "volc.bigmodel.cn",
+            "X-Api-Resource-Id": "volc.bigmodel.cn",
             "X-Api-Request-Id": self._generate_request_id(),
         }
 
         data = {
             "model": self.model,
             "messages": messages,
-        "stream": True,
+            "stream": True,
         }
 
         try:
@@ -81,9 +82,6 @@ class ZhipuGLMService:
         except Exception as e:
             logger.error(f"Zhipu GLM chat exception: {e}")
             raise Exception(f"Zhipu GLM chat error: {e}")
-
-    except Exception as e:
-            logger.error(f"Zhipu GLM chat error: {e}")
 
     async def _generate_request_id(self) -> str:
         """Generate a unique request ID."""
