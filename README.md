@@ -1,8 +1,8 @@
 # VoiceAI | 语音AI助手
 
-An AI assistant built with voice services from Doubao (豆包), designed as a reusable voice component for other applications.
+An AI assistant built with voice services from Doubao (豆包) and Zhipu GLM (智谱 GLM), designed as a reusable voice component for other applications.
 
-基于豆包语音服务构建的 AI 助手，作为可复用的语音组件用于其他应用程序。
+基于豆包语音服务和智谱 GLM 大模型构建的 AI 助手，作为可复用的语音组件用于其他应用程序。支持切换使用豆包或智谱 GLM 作为后端 LLM。
 
 ---
 
@@ -15,10 +15,20 @@ An AI assistant built with voice services from Doubao (豆包), designed as a re
 - **SQLite** - Session and conversation history storage | 会话和对话历史存储
 
 ### Integrations | 集成服务
+
+#### Voice Services | 语音服务
 - **Doubao Realtime Voice API** - End-to-end voice-to-voice model | 端到端语音到语音模型
 - **Doubao STT API** - Speech-to-Text | 语音转文字
 - **Doubao TTS API** - Text-to-Speech | 文字转语音
-- **Doubao Chat API** - AI conversation processing | AI 对话处理
+
+#### LLM Services | 大语言模型服务（可切换）
+- **Doubao Chat API** - AI conversation processing | 豆包对话处理
+- **Zhipu GLM API** (OpenAI Compatible) - AI conversation processing | 智谱 GLM 对话处理（OpenAI 兼容）
+
+#### Note | 说明
+Users can switch between Doubao and Zhipu GLM as the backend LLM. Both support OpenAI-compatible API interface.
+
+用户可以切换使用豆包或智谱 GLM 作为后端 LLM。两者都支持 OpenAI 兼容 API 接口。
 
 ### Frontend | 前端
 - **React 18** - UI framework | UI 框架
@@ -32,7 +42,7 @@ An AI assistant built with voice services from Doubao (豆包), designed as a re
 ## Architecture | 架构
 
 ```
-┌─────────────────────────────────────────────────────────────┐
+┌─────────────────────────────────────────────────────┐
 │                   Frontend Clients                        │
 │         Web | React | iOS | Android | ESP32             │
 └──────────────────┬──────────────────────────────────────────┘
@@ -44,13 +54,18 @@ An AI assistant built with voice services from Doubao (豆包), designed as a re
          └────────┬──────────┘
                   │
      ┌────────────┼────────────┐
-     │            │            │
-     ▼            ▼            ▼
-┌─────────┐  ┌─────────┐  ┌─────────┐
-│ Doubao  │  │ Doubao  │  │ Doubao  │
-│   STT   │  │   LLM   │  │   TTS   │
-└─────────┘  └─────────┘  └─────────┘
+     │            │            │            │
+     ▼            ▼            ▼            ▼
+┌─────────┐  ┌─────────────────┐  ┌─────────┐
+│ Doubao  │  │    LLM Service   │  │ Doubao  │
+│   STT   │  │ (Switchable)    │  │   TTS   │
+└─────────┘  │ Doubao / GLM   │  └─────────┘
+               └─────────────────┘
 ```
+
+**LLM Options | LLM 选项:**
+- **Doubao Chat API** - 豆包对话 API
+- **Zhipu GLM API** - 智谱 GLM (OpenAI Compatible) | 可通过配置切换
 
 ---
 
@@ -61,7 +76,7 @@ An AI assistant built with voice services from Doubao (豆包), designed as a re
 | 🎯 **RTVI Standard** | Open standard for real-time voice interaction | 实时语音交互开源标准 |
 | 🧩 **Modular** | Composable pipeline architecture | 可组合管道架构 |
 | 🌐 **Multi-platform** | Web, React, Mobile, ESP32 clients | Web、移动端、ESP32 客户端 |
-| 🔌 **Pluggable** | Easy to integrate Doubao services | 易于集成豆包服务 |
+| 🔌 **Pluggable** | Easy to integrate Doubao/GLM services | 易于集成豆包/智谱服务 |
 | 📊 **Active** | Large community, well-documented | 活跃社区，文档完善 |
 
 ---
@@ -76,8 +91,6 @@ An AI assistant built with voice services from Doubao (豆包), designed as a re
   [ ] 搭建 RTVIProcessor 并集成豆包 STT 服务
 - [ ] Set up Doubao TTS service
   [ ] 搭建豆包 TTS 服务
-- [ ] Set up Doubao LLM service
-  [ ] 搭建豆包 LLM 服务
 - [ ] Configure pipeline (transport → RTVI → STT → LLM → TTS)
   [ ] 配置管道（传输层 → RTVI → STT → LLM → TTS）
 - [ ] Set up SQLite database for session storage
@@ -91,12 +104,21 @@ An AI assistant built with voice services from Doubao (豆包), designed as a re
   [ ] 实现豆包 STT 服务
 - [ ] Implement Doubao TTS (Text-to-Speech) service
   [ ] 实现豆包 TTS 服务
-- [ ] Implement Doubao Chat LLM service
-  [ ] 实现豆包对话 LLM 服务
 - [ ] Add authentication with API key
   [ ] 添加 API 密钥认证
 
-### Phase 3: Frontend Setup | 阶段三：前端搭建
+### Phase 3: Zhipu GLM Integration | 阶段三：智谱 GLM 集成
+
+- [ ] Implement Zhipu GLM LLM service (OpenAI Compatible)
+  [ ] 实现智谱 GLM LLM 服务（OpenAI 兼容）
+- [ ] Support GLM models (GLM-4, GLM-4.6v, GLM-4.7)
+  [ ] 支持 GLM 模型（GLM-4、GLM-4.6v、GLM-4.7）
+- [ ] Implement LLM switch configuration
+  [ ] 实现 LLM 切换配置
+- [ ] Add API key authentication for GLM
+  [ ] 添加 GLM API 密钥认证
+
+### Phase 4: Frontend Setup | 阶段四：前端搭建
 
 - [ ] Initialize Vite + React + TypeScript project
   [ ] 初始化 Vite + React + TypeScript 项目
@@ -106,12 +128,14 @@ An AI assistant built with voice services from Doubao (豆包), designed as a re
   [ ] 构建带消息历史的聊天界面
 - [ ] Implement RTVI VoiceClient connection
   [ ] 实现 RTVI VoiceClient 连接
+- [ ] Add LLM selector UI (Doubao/GLM)
+  [ ] 添加 LLM 选择器界面（豆包/GLM）
 - [ ] Add voice input and output controls
   [ ] 添加语音输入和输出控制
 - [ ] Session list and management UI
   [ ] 会话列表和管理界面
 
-### Phase 4: RTVI Integration | 阶段四：RTVI 集成
+### Phase 5: RTVI Integration | 阶段五：RTVI 集成
 
 - [ ] Configure RTVI services (vad, stt, llm, tts)
   [ ] 配置 RTVI 服务（VAD、STT、LLM、TTS）
@@ -122,10 +146,14 @@ An AI assistant built with voice services from Doubao (豆包), designed as a re
 - [ ] Add metrics and error handling
   [ ] 添加指标和错误处理
 
-### Phase 5: Testing & Polish | 阶段五：测试与完善
+### Phase 6: Testing & Polish | 阶段六：测试与完善
 
-- [ ] Test end-to-end voice conversation
-  [ ] 测试端到端语音对话
+- [ ] Test end-to-end voice conversation with Doubao
+  [ ] 测试端到端语音对话（豆包）
+- [ ] Test end-to-end voice conversation with GLM
+  [ ] 测试端到端语音对话（GLM）
+- [ ] Test LLM switching between Doubao and GLM
+  [ ] 测试 LLM 切换（豆包 ↔ GLM）
 - [ ] Style with Tailwind CSS
   [ ] 使用 Tailwind CSS 样式
 - [ ] Add bilingual support (EN/ZH)
@@ -144,7 +172,7 @@ VoiceAI/
 │   │   ├── pipecat/
 │   │   │   ├── doubao_stt.py      # Doubao STT service
 │   │   │   ├── doubao_tts.py      # Doubao TTS service
-│   │   │   ├── doubao_llm.py      # Doubao LLM service
+│   │   │   ├── glm_llm.py         # Zhipu GLM LLM service (OpenAI Compatible)
 │   │   │   └── pipeline.py        # Pipecat pipeline setup
 │   │   ├── rtvi/
 │   │   │   ├── processor.py       # RTVI processor
@@ -187,18 +215,36 @@ npm run dev
 
 ## Notes | 说明
 
-This project serves as a reference implementation for integrating voice capabilities into applications using Doubao's SaaS services with the Pipecat framework.
+This project serves as a reference implementation for integrating voice capabilities into applications using Doubao's and Zhipu GLM's SaaS services with Pipecat framework.
 
-本项目作为参考实现，展示如何使用 Pipecat 框架和豆包 SaaS 服务将语音功能集成到应用程序中。
+本项目作为参考实现，展示如何使用 Pipecat 框架、豆包 SaaS 服务和智谱 GLM 将语音功能集成到应用程序中。支持切换使用豆包或智谱 GLM 作为后端 LLM。
+
+**LLM Switching | LLM 切换:**
+- 通过前端配置选择使用 Doubao 或 Zhipu GLM
+- 豆包提供端到端实时语音模型（更低延迟）
+- 智谱 GLM 提供多种模型选择（GLM-4、GLM-4.6v、GLM-4.7 等）
+- 两者都支持 OpenAI 兼容 API，易于切换
 
 ---
 
-## Doubao API References | 豆包 API 参考
+## API References | API 参考
+
+### Doubao API | 豆包 API
 
 - [豆包端到端实时语音大模型](https://www.volcengine.com/docs/6561/1594356) - Real-time voice-to-voice
-- [豆包语音合成大模型](https://www.volcengine.com/product/tts) - TTS service
+- [豆包语音合成大模型](https://www.volcengine.com/docs/6561/1257584) - TTS service
 - [豆包语音识别](https://www.volcengine.com/docs/6561/1354868) - STT service
-- [豆包大模型](https://www.volcengine.com/product/doubao-dy-auth) - Chat API
+
+### Zhipu GLM API | 智谱 GLM API
+
+- [智谱 GLM 开放平台](https://open.bigmodel.cn/) - Open platform
+- [OpenAI API 兼容](https://docs.bigmodel.cn/cn/guide/develop/openai/introduction) - OpenAI compatible interface
+- [HTTP API 调用](https://docs.bigmodel.cn/cn/guide/develop/http/introduction) - HTTP API documentation
+
+**Supported Models | 支持的模型:**
+- GLM-4 - 基座大模型
+- GLM-4.6v - 视觉模型
+- GLM-4.7 - 支持深度思考（reasoning）
 
 ---
 
