@@ -1,0 +1,48 @@
+@tailwind base;
+@layer base {
+  color: #111827;
+}
+
+body {
+  color: #111827;
+}
+
+.bg-gray-900 {
+  background-color: #111827;
+}
+
+.bg-gray-800 {
+  background-color: #1f2937;
+}
+
+.bg-black {
+  background-color: #000000;
+}
+
+.text-green-400 {
+  color: #4ade80;
+}
+
+.bg-green-500 {
+  background-color: #22c55e;
+}
+
+.bg-gray-500 {
+  background-color: #6b7280;
+}
+
+.bg-blue-600 {
+  background-color: #2563eb;
+}
+
+.bg-blue-700 {
+  background-color: #1d4ed8;
+}
+
+.bg-red-600 {
+  background-color: #dc2626;
+}
+
+.bg-red-700 {
+  background-color: #b91c1c;
+}
