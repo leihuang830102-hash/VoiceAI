@@ -8,21 +8,24 @@ An AI assistant built with voice services from Doubao (豆包), designed as a re
 
 ## Tech Stack | 技术栈
 
+### Backend | 后端
+- **Pipecat** - Real-time voice AI framework | 实时语音 AI 框架
+- **Python 3.12+** - Runtime | 运行环境
+- **RTVI Protocol** - Real-Time Voice Interaction standard | 实时语音交互标准
+- **SQLite** - Session and conversation history storage | 会话和对话历史存储
+
+### Integrations | 集成服务
+- **Doubao Realtime Voice API** - End-to-end voice-to-voice model | 端到端语音到语音模型
+- **Doubao STT API** - Speech-to-Text | 语音转文字
+- **Doubao TTS API** - Text-to-Speech | 文字转语音
+- **Doubao Chat API** - AI conversation processing | AI 对话处理
+
 ### Frontend | 前端
 - **React 18** - UI framework | UI 框架
 - **TypeScript** - Type safety | 类型安全
 - **Vite** - Build tool | 构建工具
 - **Tailwind CSS** - Styling | 样式
-- **Zustand** - State management (sessions, memory) | 状态管理（会话、记忆）
-
-### Backend | 后端
-- **Node.js + Express** - API server | API 服务器
-- **Socket.IO** - Real-time audio streaming | 实时音频流
-- **SQLite/PostgreSQL** - Session and conversation history storage | 会话和对话历史存储
-
-### Integrations | 集成服务
-- **Doubao Voice API** - STT (Speech-to-Text) and TTS (Text-to-Speech) | 语音转文字和文字转语音
-- **Doubao Chat API** - AI conversation processing | AI 对话处理
+- **@realtime-ai/rtvi-client** - RTVI client SDK | RTVI 客户端 SDK
 
 ---
 
@@ -30,101 +33,105 @@ An AI assistant built with voice services from Doubao (豆包), designed as a re
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                         Frontend                             │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │ Chat UI      │  │ Voice Input  │  │ Session List │      │
-│  │ (Text Mode)  │  │ (Audio Mode) │  │ (History)    │      │
-│  └──────┬───────┘  └──────┬───────┘  └──────────────┘      │
-│         │                 │                                │
-│         └────────┬────────┘                                │
-│                  │                                         │
-│            ┌─────▼─────┐                                   │
-│            │ API Client│                                   │
-│            └─────┬─────┘                                   │
-└──────────────────┼─────────────────────────────────────────┘
-                   │
+│                   Frontend Clients                        │
+│         Web | React | iOS | Android | ESP32             │
+└──────────────────┬──────────────────────────────────────────┘
+                   │ (RTVI Protocol)
          ┌─────────▼─────────┐
-         │   Backend API     │
-         │   (Express +      │
-         │    Socket.IO)     │
+         │     Pipecat       │
+         │  Server Framework  │
+         │  (Python + RTVI)  │
          └────────┬──────────┘
                   │
      ┌────────────┼────────────┐
      │            │            │
      ▼            ▼            ▼
 ┌─────────┐  ┌─────────┐  ┌─────────┐
-│   DB    │  │ Doubao  │  │ Doubao  │
-│(Sessions│  │  Voice  │  │  Chat   │
-│ History)│  │   API   │  │   API   │
+│ Doubao  │  │ Doubao  │  │ Doubao  │
+│   STT   │  │   LLM   │  │   TTS   │
 └─────────┘  └─────────┘  └─────────┘
 ```
 
 ---
 
+## Why Pipecat? | 为什么选择 Pipecat?
+
+| Feature | Description | 说明 |
+|----------|-------------|------|
+| 🎯 **RTVI Standard** | Open standard for real-time voice interaction | 实时语音交互开源标准 |
+| 🧩 **Modular** | Composable pipeline architecture | 可组合管道架构 |
+| 🌐 **Multi-platform** | Web, React, Mobile, ESP32 clients | Web、移动端、ESP32 客户端 |
+| 🔌 **Pluggable** | Easy to integrate Doubao services | 易于集成豆包服务 |
+| 📊 **Active** | Large community, well-documented | 活跃社区，文档完善 |
+
+---
+
 ## Implementation Plan | 实现方案
 
-### Phase 1: Backend Foundation | 阶段一：后端基础
+### Phase 1: Pipecat Server Setup | 阶段一：Pipecat 服务器搭建
 
-- [ ] Set up Express server with TypeScript
-  [ ] 搭建 TypeScript Express 服务器
-- [ ] Implement Doubao Voice API integration (STT/TTS)
-  [ ] 实现豆包语音 API 集成（STT/TTS）
-- [ ] Implement Doubao Chat API integration
-  [ ] 实现豆包对话 API 集成
+- [ ] Install Pipecat framework and dependencies
+  [ ] 安装 Pipecat 框架和依赖
+- [ ] Set up RTVIProcessor with Doubao STT service
+  [ ] 搭建 RTVIProcessor 并集成豆包 STT 服务
+- [ ] Set up Doubao TTS service
+  [ ] 搭建豆包 TTS 服务
+- [ ] Set up Doubao LLM service
+  [ ] 搭建豆包 LLM 服务
+- [ ] Configure pipeline (transport → RTVI → STT → LLM → TTS)
+  [ ] 配置管道（传输层 → RTVI → STT → LLM → TTS）
 - [ ] Set up SQLite database for session storage
   [ ] 搭建 SQLite 数据库用于会话存储
-- [ ] Create REST API endpoints
-  [ ] 创建 REST API 端点
 
-### Phase 2: Real-time Audio Streaming | 阶段二：实时音频流
+### Phase 2: Doubao API Integration | 阶段二：豆包 API 集成
 
-- [ ] Configure Socket.IO for audio streaming
-  [ ] 配置 Socket.IO 用于音频流传输
-- [ ] Implement audio input streaming endpoint
-  [ ] 实现音频输入流端点
-- [ ] Implement audio output streaming endpoint
-  [ ] 实现音频输出流端点
-- [ ] Handle WebSocket connection lifecycle
-  [ ] 处理 WebSocket 连接生命周期
+- [ ] Implement Doubao Realtime Voice API client
+  [ ] 实现豆包实时语音 API 客户端
+- [ ] Implement Doubao STT (Speech-to-Text) service
+  [ ] 实现豆包 STT 服务
+- [ ] Implement Doubao TTS (Text-to-Speech) service
+  [ ] 实现豆包 TTS 服务
+- [ ] Implement Doubao Chat LLM service
+  [ ] 实现豆包对话 LLM 服务
+- [ ] Add authentication with API key
+  [ ] 添加 API 密钥认证
 
-### Phase 3: Frontend UI | 阶段三：前端界面
+### Phase 3: Frontend Setup | 阶段三：前端搭建
 
 - [ ] Initialize Vite + React + TypeScript project
   [ ] 初始化 Vite + React + TypeScript 项目
+- [ ] Install @realtime-ai/rtvi-client SDK
+  [ ] 安装 RTVI 客户端 SDK
 - [ ] Build chat interface with message history
   [ ] 构建带消息历史的聊天界面
-- [ ] Implement text input and send functionality
-  [ ] 实现文本输入和发送功能
-- [ ] Add voice input button and recording UI
-  [ ] 添加语音输入按钮和录音界面
-- [ ] Add voice output playback
-  [ ] 添加语音输出播放
+- [ ] Implement RTVI VoiceClient connection
+  [ ] 实现 RTVI VoiceClient 连接
+- [ ] Add voice input and output controls
+  [ ] 添加语音输入和输出控制
 - [ ] Session list and management UI
   [ ] 会话列表和管理界面
 
-### Phase 4: State Management | 阶段四：状态管理
+### Phase 4: RTVI Integration | 阶段四：RTVI 集成
 
-- [ ] Set up Zustand store
-  [ ] 搭建 Zustand 状态管理
-- [ ] Manage current session state
-  [ ] 管理当前会话状态
-- [ ] Manage conversation history
-  [ ] 管理对话历史
-- [ ] Handle recording/playback states
-  [ ] 处理录音/播放状态
+- [ ] Configure RTVI services (vad, stt, llm, tts)
+  [ ] 配置 RTVI 服务（VAD、STT、LLM、TTS）
+- [ ] Handle RTVI events (speaking state, transcriptions)
+  [ ] 处理 RTVI 事件（说话状态、转录）
+- [ ] Implement interruption handling
+  [ ] 实现打断处理
+- [ ] Add metrics and error handling
+  [ ] 添加指标和错误处理
 
-### Phase 5: Integration & Polish | 阶段五：集成与完善
+### Phase 5: Testing & Polish | 阶段五：测试与完善
 
-- [ ] Connect frontend to backend APIs
-  [ ] 连接前端与后端 API
-- [ ] Implement real-time audio streaming
-  [ ] 实现实时音频流
-- [ ] Add loading states and error handling
-  [ ] 添加加载状态和错误处理
+- [ ] Test end-to-end voice conversation
+  [ ] 测试端到端语音对话
 - [ ] Style with Tailwind CSS
   [ ] 使用 Tailwind CSS 样式
-- [ ] Test with Doubao APIs
-  [ ] 使用豆包 API 测试
+- [ ] Add bilingual support (EN/ZH)
+  [ ] 添加双语支持（英文/中文）
+- [ ] Performance optimization
+  [ ] 性能优化
 
 ---
 
@@ -134,19 +141,26 @@ An AI assistant built with voice services from Doubao (豆包), designed as a re
 VoiceAI/
 ├── backend/
 │   ├── src/
-│   │   ├── api/           # API routes | API 路由
-│   │   ├── services/      # Doubao API services | 豆包 API 服务
-│   │   ├── db/            # Database setup | 数据库配置
-│   │   └── index.ts       # Server entry | 服务入口
-│   └── package.json
+│   │   ├── pipecat/
+│   │   │   ├── doubao_stt.py      # Doubao STT service
+│   │   │   ├── doubao_tts.py      # Doubao TTS service
+│   │   │   ├── doubao_llm.py      # Doubao LLM service
+│   │   │   └── pipeline.py        # Pipecat pipeline setup
+│   │   ├── rtvi/
+│   │   │   ├── processor.py       # RTVI processor
+│   │   │   └── observer.py        # RTVI observer
+│   │   ├── db/
+│   │   │   └── sessions.py       # Session storage
+│   │   └── server.py            # Server entry
+│   ├── requirements.txt
+│   └── .env                  # API keys (keep secret)
 ├── frontend/
 │   ├── src/
-│   │   ├── components/    # UI components | UI 组件
-│   │   ├── store/         # Zustand stores | Zustand 状态管理
-│   │   ├── hooks/         # Custom hooks | 自定义钩子
-│   │   ├── api/           # API client | API 客户端
+│   │   ├── components/          # UI components | UI 组件
+│   │   ├── hooks/              # Custom hooks | 自定义钩子
 │   │   └── App.tsx
-│   └── package.json
+│   ├── package.json
+│   └── .env                  # API keys (keep secret)
 └── README.md
 ```
 
@@ -157,8 +171,9 @@ VoiceAI/
 ### Backend | 后端
 ```bash
 cd backend
-npm install
-npm run dev
+pip install -e .
+uv sync
+python src/server.py
 ```
 
 ### Frontend | 前端
@@ -172,6 +187,23 @@ npm run dev
 
 ## Notes | 说明
 
-This project serves as a reference implementation for integrating voice capabilities into applications using Doubao's SaaS services.
+This project serves as a reference implementation for integrating voice capabilities into applications using Doubao's SaaS services with the Pipecat framework.
 
-本项目作为参考实现，展示如何使用豆包 SaaS 服务将语音功能集成到应用程序中。
+本项目作为参考实现，展示如何使用 Pipecat 框架和豆包 SaaS 服务将语音功能集成到应用程序中。
+
+---
+
+## Doubao API References | 豆包 API 参考
+
+- [豆包端到端实时语音大模型](https://www.volcengine.com/docs/6561/1594356) - Real-time voice-to-voice
+- [豆包语音合成大模型](https://www.volcengine.com/product/tts) - TTS service
+- [豆包语音识别](https://www.volcengine.com/docs/6561/1354868) - STT service
+- [豆包大模型](https://www.volcengine.com/product/doubao-dy-auth) - Chat API
+
+---
+
+## Resources | 资源
+
+- [Pipecat Documentation](https://docs.pipecat.ai/) - 实时语音 AI 框架文档
+- [RTVI Standard](https://github.com/rtvi-ai) - 实时语音交互标准
+- [Pipecat GitHub](https://github.com/pipecat-ai/pipecat) - Pipecat 源码
