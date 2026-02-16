@@ -18,15 +18,19 @@ from pipecat.frames.frames import (
     UserTranscriptionFrame,
     BotTranscriptionFrame,
 )
+from loguru import logger
+
+# Import Doubao STT service
+from ..doubao_stt import DoubaoSTTService, get_service
 
 
 @dataclass
 class RTVIConfig:
     """Configuration for RTVI processor."""
     vad: RTVAudioService
-    stt: Optional[TTSService]
-    llm: Optional[LLMService]
-    tts: Optional[TTSService]
+    stt: Optional[TTSService] = get_service("doubao_stt")
+    llm: Optional[LLMService] = get_service("glm_llm")
+    tts: Optional[TTSService] = get_service("doubao_tts")
 
 
 @dataclass
@@ -37,6 +41,12 @@ class RTVIProcessor:
     _client_ready: bool = False
     _bot_ready: bool = False
 
+    def __init__(self, config: RTVIConfig):
+        """Initialize RTVI processor with configuration."""
+        self.config = config
+        self._client_ready = False
+        self._bot_ready = False
+
     async def handle_event(self, event_name: str, **kwargs) -> None:
         """Handle RTVI events."""
         if event_name == "client_ready":
@@ -46,7 +56,7 @@ class RTVIProcessor:
         elif event_name == "bot_ready":
             self._bot_ready = True
             logger.info("Bot ready, sending config...")
-            # Send configuration with LLM options
+            # Send configuration with LLM options and STT service
             config_data = self._get_llm_config()
             yield ConfigFrame(config=config_data)
         elif event_name == "user_started_speaking":
@@ -78,9 +88,30 @@ class RTVIProcessor:
 
     def _get_llm_config(self) -> List[Dict[str, Any]]:
         """Get LLM service configuration for RTVI."""
+        config_data = []
+
+        # Add Doubao STT service if configured
+        if self.config.stt:
+            config_data.append({
+                "service": "doubao_stt",
+                "options": []
+            })
+
+        # Add Zhipu GLM LLM service if configured
         if self.config.llm:
-            return [{"service": "llm", "options": []}]
-        return []
+            if self.config.llm.model == "doubao":
+                # Doubao LLM doesn't support service config via RTVI
+                pass
+            else:  # Zhipu GLM via OpenAI compatible
+                config_data.append({
+                    "service": self.config.llm.model,
+                    "options": [
+                        {"name": "model", "value": "glm-4"},
+                        {"name": "temperature", "value": 0.7},
+                    ]
+                })
+
+        return config_data
 
     async def set_client_ready(self) -> None:
         """Mark client as ready."""
